@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,12 +9,37 @@ struct fluffle {
                hunger;
 };
 
+int strpos(const char *, const char);
+int strany(const char *, const char *);
 double increase(double);
 double decrease(double);
+double calc_love(double, double, double);
+char *input_loop(FILE *, const char *delimiters);
 char *name_loop(FILE *, char, size_t);
 char *get_name(FILE *);
 int loop(char, struct fluffle);
 void clean(struct fluffle);
+
+int strpos(const char *string, const char search) {
+        int i = 0;
+        char current;
+        while (current = string[i++])
+                if (current == search)
+                        break;
+        if (current == search)
+                return i;
+        else
+                return -1;
+}
+
+int strany(const char *string, const char *any) {
+        int i = 0,
+            j = 0;
+        while (i = strpos(string, any[j++]))
+                if (i > -1)
+                        break;
+        return i;
+}
 
 double increase(double current)
 {
@@ -25,24 +51,33 @@ double decrease(double current)
         return current / ((current + 1) * 2);
 }
 
+double calc_love(double current, double happiness, double hunger)
+{
+        return 0;
+}
+
 struct fluffle play(struct fluffle current)
 {
+        double happiness = increase(current.happiness),
+               hunger = decrease(current.hunger);
         struct fluffle result = {
                 current.name,
-                current.love,
-                increase(current.happiness),
-                decrease(current.hunger)
+                calc_love(current.love, happiness, hunger),
+                happiness,
+                hunger
         };
         return result;
 }
 
 struct fluffle feed(struct fluffle current)
 {
+        double happiness = current.happiness,
+               hunger = increase(current.hunger);
         struct fluffle result = {
                 current.name,
-                current.love,
-                current.happiness,
-                increase(current.hunger)
+                calc_love(current.love, happiness, hunger),
+                happiness,
+                hunger
         };
         return result;
 }
@@ -86,7 +121,27 @@ int loop(char input, struct fluffle players_fluffle)
         return loop(getchar(), update);
 }
 
-char *name_loop(FILE *stream, char input, size_t size) {
+char *real_input_loop(FILE *stream, char input, size_t size, const char *delimiters)
+{
+        char *buffer;
+        if (input && (strpos(delimiters, input) > -1)) {
+                buffer = malloc(size + 1);
+                buffer[size] = '\0';
+                return buffer;
+        } else {
+                buffer = real_input_loop(stream, getc(stream), size + 1, delimiters);
+                buffer[size] = input;
+                return buffer;
+        }
+}
+char *input_loop(FILE *stream, const char *delimiters)
+{
+        return real_input_loop(stream, getc(stream), 0, delimiters);
+}
+
+
+char *name_loop(FILE *stream, char input, size_t size)
+{
         char *buffer;
         if (input &&
                 (input == '\n' ||
@@ -103,7 +158,9 @@ char *name_loop(FILE *stream, char input, size_t size) {
 
 char *get_name(FILE *file)
 {
-        return name_loop(file, getc(file), 0);
+        // return name_loop(file, getc(file), 0);
+        const char delimiters[] = { '\n', EOF, '\0' };
+        return input_loop(file, delimiters);
 }
 
 void clean(struct fluffle players_fluffle)
