@@ -1,24 +1,7 @@
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
-struct fluffle {
-        char *name;
-        double love,
-               happiness,
-               hunger;
-};
-
-int strpos(const char *, const char);
-int strany(const char *, const char *);
-double increase(double);
-double decrease(double);
-double calc_love(double, double, double);
-char *input_loop(FILE *, const char *delimiters);
-char *name_loop(FILE *, char, size_t);
-char *get_name(FILE *);
-int loop(char, struct fluffle);
-void clean(struct fluffle);
+#include "fluffles.h"
 
 int strpos(const char *string, const char search) {
         int i = 0;
@@ -53,7 +36,7 @@ double decrease(double current)
 
 double calc_love(double current, double happiness, double hunger)
 {
-        return 0;
+        return current + ((happiness + hunger) / 10.0);
 }
 
 struct fluffle play(struct fluffle current)
@@ -168,14 +151,4 @@ void clean(struct fluffle players_fluffle)
         free(players_fluffle.name);
 }
 
-int main(int argc, char **argv)
-{
-        struct fluffle players_fluffle = {
-                0,
-                hunger: 5.0
-        };
-        printf("What's your fluffle's name?\n");
-        players_fluffle.name = get_name(stdin);
-        printf("Right! Your fluffle's name is %s!\n", players_fluffle.name);
-        return loop(0, players_fluffle);
-}
+
