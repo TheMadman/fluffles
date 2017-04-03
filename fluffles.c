@@ -31,7 +31,7 @@ double increase(double current)
 
 double decrease(double current)
 {
-        return current / ((current + 1) * 2);
+        return current / 1.25;
 }
 
 double calc_love(double current, double happiness, double hunger)
@@ -54,7 +54,7 @@ struct fluffle play(struct fluffle current)
 
 struct fluffle feed(struct fluffle current)
 {
-        double happiness = current.happiness,
+        double happiness = decrease(current.happiness),
                hunger = increase(current.hunger);
         struct fluffle result = {
                 current.name,
@@ -122,26 +122,8 @@ char *input_loop(FILE *stream, const char *delimiters)
         return real_input_loop(stream, getc(stream), 0, delimiters);
 }
 
-
-char *name_loop(FILE *stream, char input, size_t size)
-{
-        char *buffer;
-        if (input &&
-                (input == '\n' ||
-                 input == EOF)) {
-                buffer = malloc(size + 1);
-                buffer[size] = '\0';
-                return buffer;
-        } else {
-                buffer = name_loop(stream, getc(stream), size + 1);
-                buffer[size] = input;
-                return buffer;
-        }
-}
-
 char *get_name(FILE *file)
 {
-        // return name_loop(file, getc(file), 0);
         const char delimiters[] = { '\n', EOF, '\0' };
         return input_loop(file, delimiters);
 }
